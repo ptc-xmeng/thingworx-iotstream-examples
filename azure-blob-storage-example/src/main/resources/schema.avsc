@@ -1,0 +1,12 @@
+{
+   "namespace": "com.thingworx.analytics.blobstorage.example.message",
+   "type": "record",
+   "name": "Message",
+   "fields": [
+      {"name": "name", "type": "string"},
+      {"name": "value", "type": "int"},
+      {"name": "source", "type": "string"},
+      {"name": "timestamp", "type": "long"},
+      {"name": "quality", "type": "string"}
+   ]
+}
