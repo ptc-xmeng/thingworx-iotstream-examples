@@ -26,6 +26,8 @@ public class AzureBlobKafkaStoragePersistence {
 
     public static final String PATH = "messages";
 
+    public static final String QUEUE_NAME = "<topic name>";
+
     private static String accountName = "<storage account>";
     private static String accessKey = "<storage account key>";
     private static String containerName = "<container name>";
@@ -38,7 +40,7 @@ public class AzureBlobKafkaStoragePersistence {
 
     public static void main(String[] args) {
         KafkaConsumer<String, byte[]> consumer = getStringKafkaConsumer();
-        consumer.subscribe(Collections.singletonList("durable-queue"));
+        consumer.subscribe(Collections.singletonList(QUEUE_NAME));
         AzureStorageWriter writer = new AzureStorageWriter(accountName, accessKey, containerName);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
