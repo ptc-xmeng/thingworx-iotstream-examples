@@ -8,6 +8,7 @@
 
     <modules>
         <module>databricks-kafka</module>
+        <module>azure-blob-storage-example</module>
     </modules>
 
     <build>
