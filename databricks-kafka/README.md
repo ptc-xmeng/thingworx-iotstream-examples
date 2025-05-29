@@ -2,7 +2,8 @@
 This contains example code that is able to run in databricks as executable jar.
 
 # How to use it?
-This example module has 2 main java classes that both could run as entry point in databricks.  
+This example module has 2 main java classes that both could run as entry point in databricks.  This code build with spark 3.5.0 and 
+scala 2.12, databricks needs to be on the same config.    
 Update `<mainClass>com.thingworx.analytics.durablequeue.EventhubJavaExample</mainClass>` in pom to config which main you want to run.
 
 ### [EventhubJavaExample](src/main/java/com/thingworx/analytics/durablequeue/EventhubJavaExample.java)  
