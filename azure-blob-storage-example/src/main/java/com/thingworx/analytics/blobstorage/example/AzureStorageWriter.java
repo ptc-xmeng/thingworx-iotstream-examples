@@ -1,11 +1,16 @@
 package com.thingworx.analytics.blobstorage.example;
 
+import com.thingworx.analytics.blobstorage.example.message.Message;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.parquet.avro.AvroParquetReader;
 import org.apache.parquet.avro.AvroParquetWriter;
+import org.apache.parquet.avro.AvroReadSupport;
+import org.apache.parquet.avro.ReflectDataSupplier;
 import org.apache.parquet.hadoop.ParquetFileWriter;
+import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.parquet.hadoop.metadata.CompressionCodecName;
 
@@ -21,17 +26,30 @@ public class AzureStorageWriter {
         this.pathTemplate = String.format("wasbs://%s@%s.blob.core.windows.net/", containerName, accountName);
     }
 
-    public void writeBulk(String path, Schema schema, Collection<GenericRecord> records) throws IOException {
+    public void writeBulk(String path, Schema schema, Collection<Message> records) throws IOException {
         String newPath = pathTemplate + path;
-        try (ParquetWriter<GenericRecord> parquetWriter =
-                 AvroParquetWriter.<GenericRecord>builder(new Path(newPath))
+        try (ParquetWriter<Message> parquetWriter =
+                 AvroParquetWriter.<Message>builder(new Path(newPath))
                      .withConf(conf)
                      .withWriteMode(ParquetFileWriter.Mode.OVERWRITE)
                      .withCompressionCodec(CompressionCodecName.UNCOMPRESSED)
                      .withSchema(schema)
                      .build()) {
-            for (GenericRecord record : records){
+            for (Message record : records){
                 parquetWriter.write(record);
+            }
+        }
+    }
+
+    public void readFiles(String path) throws IOException {
+        conf.setBoolean(AvroReadSupport.AVRO_COMPATIBILITY, false);
+        AvroReadSupport.setAvroDataSupplier(conf, ReflectDataSupplier.class);
+
+        try (ParquetReader<Message> parquetReader = AvroParquetReader.<Message>builder(new Path(path)).withConf(conf).build()) {
+            Message record = parquetReader.read();
+            while (record != null) {
+                System.out.println(record.toString());
+                record = parquetReader.read();
             }
         }
     }

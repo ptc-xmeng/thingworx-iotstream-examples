@@ -9,9 +9,9 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 
 public class EventhubJavaExample {
-    public static final String ENDPOINT = "Endpoint=sb://<event hub>.servicebus.windows.net/;SharedAccessKeyName=test-policy;" +
+    public static final String ENDPOINT = "Endpoint=sb://<eventhub_name>.servicebus.windows.net/;SharedAccessKeyName=<key_name>;" +
         "SharedAccessKey=<key>";
-    public static final String EVENTHUB = "durable-queue";
+    public static final String EVENTHUB = "<queue_name>";
 
     public static void main(String[] args) throws Exception {
         SparkSession spark = SparkSession.builder()

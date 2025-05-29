@@ -34,9 +34,9 @@ public class AzureBlobKafkaStoragePersistence {
 
     public static final String KAFKA_HOST = "<kafka host>";
 
-    private static int BUFF_SIZE = 16;
+    private static int BUFF_SIZE = 64;
 
-    private static Queue<GenericRecord> queue = new LinkedList<>();
+    private static Queue<Message> queue = new LinkedList<>();
 
     public static void main(String[] args) {
         KafkaConsumer<String, byte[]> consumer = getStringKafkaConsumer();
@@ -53,10 +53,10 @@ public class AzureBlobKafkaStoragePersistence {
                 for (ConsumerRecord<String, byte[]> record : records) {
                     AbstractMap.SimpleEntry<Message, GenericRecord> msg = deserializer.apply(record.value());
                     System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), msg.getKey().toString());
-                    queue.add(msg.getValue());
+                    queue.add(msg.getKey());
 
                     if (queue.size() >= BUFF_SIZE) {
-                        Collection<GenericRecord> col = new LinkedList<>();
+                        Collection<Message> col = new LinkedList<>();
                         while (!queue.isEmpty()) {
                             col.add(queue.poll());
                         }
@@ -77,7 +77,6 @@ public class AzureBlobKafkaStoragePersistence {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "group1");
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
-        //        props.put("schema.registry.url", "https://your_schema_registry:8081");
         props.put("specific.avro.reader", "true");
         props.put("security.protocol", "PLAINTEXT");
         //        props.put("ssl.truststore.location", "/path/to/your/truststore.jks");
